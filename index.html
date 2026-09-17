@@ -597,7 +597,11 @@ L.ClippedImageOverlay = L.Layer.extend({
     img.src = this._url;
   },
   _toXY(lat, lon){
-    const p = this._map.latLngToLayerPoint([lat, lon]);
+    /* usa latLngToContainerPoint (nao latLngToLayerPoint): o canvas e
+       posicionado alinhado ao container do mapa (ver _reset), entao os
+       pixels desenhados precisam estar no MESMO sistema de referencia -
+       misturar os dois e o que fazia a camada "escorregar" ao arrastar. */
+    const p = this._map.latLngToContainerPoint([lat, lon]);
     return [p.x, p.y];
   },
   _reset(){
