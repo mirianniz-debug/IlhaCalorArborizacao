@@ -49,7 +49,7 @@
   }
   body.dark-mode.satellite-active .leaflet-tile-pane{ filter:none; }
   *{box-sizing:border-box;}
-  html,body{height:100%;margin:0;padding:0;background:var(--paper);color:var(--ink);transition:background .25s ease,color .25s ease;}
+  html,body{height:100%;margin:0;padding:0;background:var(--paper);color:var(--ink);transition:background .25s ease,color .25s ease;overflow-x:hidden;}
   body{display:flex;flex-direction:column;overflow:hidden;}
 
   header{
@@ -71,11 +71,13 @@
     padding:3px;box-shadow:0 1px 4px rgba(0,0,0,.3);
   }
   header .crest img{width:100%;height:100%;object-fit:contain;display:block;}
-  header .titles{display:flex;flex-direction:column;line-height:1.15;}
-  header h1{font:600 17px/1.2 var(--font-display);margin:0;letter-spacing:.2px;color:#fbfcf8;}
+  header .titles{display:flex;flex-direction:column;line-height:1.15;min-width:0;overflow:hidden;}
+  header h1{font:600 17px/1.2 var(--font-display);margin:0;letter-spacing:.2px;color:#fbfcf8;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   header p{
     margin:3px 0 0;font:500 10.5px/1 var(--font-mono);color:#9fb3ac;
     text-transform:uppercase;letter-spacing:.09em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   header .spacer{flex:1;}
   #themeToggle{
@@ -181,6 +183,35 @@
     background:transparent;color:var(--reflor-dark);font:600 12.5px var(--font-body);cursor:pointer;
   }
   #fitBtn:hover{background:var(--hover);}
+
+  #infoDataBtn{
+    width:100%;margin-top:8px;padding:9px;border-radius:7px;border:1px dashed var(--line-strong);
+    background:transparent;color:var(--ink-soft);font:600 12.5px var(--font-body);cursor:pointer;
+  }
+  #infoDataBtn:hover{background:var(--hover);color:var(--ink);}
+
+  #infoModalBg{
+    position:fixed;inset:0;background:rgba(15,20,14,.55);
+    display:none;align-items:center;justify-content:center;z-index:3000;padding:20px;
+  }
+  #infoModalBg.open{display:flex;}
+  #infoModal{
+    background:var(--panel);border-radius:13px;max-width:520px;width:100%;
+    max-height:82vh;overflow-y:auto;padding:24px 26px 22px;
+    box-shadow:0 20px 50px rgba(0,0,0,.35);position:relative;
+  }
+  #infoModal h2{
+    font:700 17px var(--display,var(--font-body));margin:0 0 14px;color:var(--ink);
+    display:flex;align-items:center;gap:8px;
+  }
+  #infoModal p{font:400 13.5px/1.6 var(--font-body);color:var(--ink);margin:0 0 12px;}
+  #infoModal p:last-of-type{margin-bottom:0;}
+  #infoModalClose{
+    position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;
+    border:1px solid var(--line-strong);background:transparent;color:var(--ink-soft);
+    font:600 15px var(--font-body);cursor:pointer;line-height:1;
+  }
+  #infoModalClose:hover{background:var(--hover);color:var(--ink);}
 
   #corrBtn{
     width:100%;margin-top:8px;padding:9px;border-radius:7px;border:1px dashed var(--line-strong);
@@ -295,6 +326,14 @@
     #mapCredit .cred-role{font-size:7px;}
   }
 
+  @media (max-width:400px){
+    header{padding:9px 10px;gap:8px;}
+    header .crest{width:32px;height:32px;}
+    header h1{font-size:12.5px;}
+    #themeToggle{width:28px;height:28px;}
+    #toggleSidebar{padding:6px 8px;font-size:11px;}
+  }
+
   .heat-scale{display:flex;height:10px;border-radius:3px;overflow:hidden;border:1px solid var(--line-strong);margin-top:4px;}
   .heat-scale span{flex:1;}
   .opacity-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px;}
@@ -342,6 +381,8 @@
 
     <button id="fitBtn">&#10530; Ajustar a area de interesse</button>
 
+    <button id="infoDataBtn">&#8505; Sobre os dados</button>
+
     <div class="section-tick"><span>Calor x copa (analise)</span></div>
     <div class="section-caption">Ideia: temperatura media (LST) x % de copa — por poligono do zoneamento ou por area que voce desenhar no mapa. Amostragem aproximada por pixel, nao e zonal statistics do QGIS</div>
     <button id="corrBtn">&#8942; Calcular correlacao (poligonos do zoneamento)</button>
@@ -353,6 +394,16 @@
     <div id="drawHint" class="draw-hint"></div>
     <div id="corrResults"></div>
   </aside>
+
+  <div id="infoModalBg">
+    <div id="infoModal">
+      <button id="infoModalClose" aria-label="Fechar">&times;</button>
+      <h2>&#8505; Sobre a precisao dos dados</h2>
+      <p>Os mapas de temperatura de superficie e de cobertura de arvores deste geoportal foram gerados a partir de imagens de satelite, por meio de metodos automaticos de classificacao. Esse tipo de tecnologia e muito util para mostrar o panorama geral do municipio — onde a cidade fica mais quente e onde ha mais ou menos vegetacao — mas nao tem precisao de 100%.</p>
+      <p>Por isso, e esperado encontrar pequenas imprecisoes pontuais: um trecho marcado como "copa de arvore" que na verdade e outro tipo de vegetacao (como grama alta ou arbusto), ou uma variacao de temperatura que nao reflete exatamente o que se sente naquele ponto especifico. Isso acontece porque o satelite enxerga a cidade em blocos de poucos metros, e o algoritmo faz a melhor estimativa possivel a partir disso — sem "andar pelas ruas" para confirmar cada detalhe.</p>
+      <p>Esses mapas devem ser interpretados como um retrato geral do territorio e uma ferramenta de apoio a tomada de decisao — nao como um inventario exato, arvore por arvore. Para confirmacoes pontuais, a verificacao em campo continua sendo a forma mais confiavel.</p>
+    </div>
+  </div>
 
   <div id="map">
     <div id="northArrow">
@@ -798,6 +849,13 @@ map.fitBounds(unionBounds, {padding:[24,24]});
 document.getElementById('fitBtn').addEventListener('click', ()=>{
   map.fitBounds(unionBounds, {padding:[24,24]});
 });
+
+/* modal "Sobre os dados" */
+const infoModalBg = document.getElementById('infoModalBg');
+document.getElementById('infoDataBtn').addEventListener('click', ()=> infoModalBg.classList.add('open'));
+document.getElementById('infoModalClose').addEventListener('click', ()=> infoModalBg.classList.remove('open'));
+infoModalBg.addEventListener('click', (e)=>{ if(e.target === infoModalBg) infoModalBg.classList.remove('open'); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') infoModalBg.classList.remove('open'); });
 
 /* mobile sidebar toggle */
 const sidebar = document.getElementById('sidebar');
