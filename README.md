@@ -4,8 +4,6 @@ Geoportal interativo para visualização cruzada entre ilhas de calor urbanas e 
 
 🔗 **Acesse ao vivo:** https://mirianniz-debug.github.io/IlhaCalorArborizacao/
 
-👤 **Parte do portfólio de:** https://mirianniz-debug.github.io/Portfolio/
-
 ## Sobre
 
 Mapa web que permite consultar e comparar espacialmente áreas com maior intensidade de ilha de calor e a distribuição da arborização urbana, servindo de apoio a análises de conforto térmico e planejamento urbano/ambiental.
